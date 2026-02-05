@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 
 function TaxForm() {
-  
+  // This state stores what the user types
   const [formData, setFormData] = useState({
     income: '',
     expenses: '',
     taxYear: '2025'
   });
 
-  
+  // This handles typing in the boxes
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -16,17 +16,17 @@ function TaxForm() {
     });
   };
 
-  
+  // This handles the button click
   const handleSubmit = (e) => {
-    e.preventDefault(); 
-    
-    alert(`Ready to send to AI:\nIncome: €${formData.income}\nExpenses: €${formData.expenses}`);
+    e.preventDefault(); // Stops the page from refreshing
+    // For Phase 1, we just show an alert. In Phase 2, we will send this to Python.
+    alert(`Ready to send to AI:\nIncome: $${formData.income}\nExpenses: $${formData.expenses}`);
   };
 
   return (
     <form onSubmit={handleSubmit} style={styles.form}>
       <div style={styles.inputGroup}>
-        <label style={styles.label}>Total Annual Income (€)</label>
+        <label style={styles.label}>Total Annual Income ($)</label>
         <input
           type="number"
           name="income"
@@ -37,10 +37,9 @@ function TaxForm() {
           style={styles.input}
         />
       </div>
-      
-   
+
       <div style={styles.inputGroup}>
-        <label style={styles.label}>Total Expenses (€)</label>
+        <label style={styles.label}>Total Expenses ($)</label>
         <input
           type="number"
           name="expenses"
@@ -83,7 +82,7 @@ const styles = {
     borderRadius: '6px',
     border: '1px solid #cbd5e0',
     fontSize: '1rem',
-    boxSizing: 'border-box',
+    boxSizing: 'border-box', // Ensures padding doesn't break width
   },
   button: {
     width: '100%',
