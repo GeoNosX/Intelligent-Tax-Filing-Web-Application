@@ -90,7 +90,7 @@ function TaxForm() {
               <span style={styles.statValue}>${result.taxable_income.toLocaleString()}</span>
             </div>
             <div style={styles.statItem}>
-              <span style={styles.statLabel}>Est. Tax (20%)</span>
+              <span style={styles.statLabel}>Est. Tax (23%)</span>
               <span style={styles.statValue}>${result.estimated_tax.toLocaleString()}</span>
             </div>
           </div>

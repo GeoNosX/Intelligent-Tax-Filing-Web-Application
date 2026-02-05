@@ -39,14 +39,14 @@ async def calculate_tax(data: TaxData):
     try:
         
         taxable_income = data.income - data.expenses
-        estimated_tax = taxable_income * 0.23  
+        estimated_tax = taxable_income * 0.23 
         
        
         prompt = ChatPromptTemplate.from_template(
         """
         You are a helpful tax assistant. 
-        The user has an annual income of ${income} and expenses of ${expenses}.
-        Their estimated taxable income is ${taxable_income}.
+        The user has an annual income of {income}€ and expenses of {expenses}€.
+        Their estimated taxable income is {taxable_income}€.
         
         Please provide:
         1. A brief analysis of their financial situation.
