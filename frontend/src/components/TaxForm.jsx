@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 
 function TaxForm() {
-  // This state stores what the user types
   const [formData, setFormData] = useState({
     income: '',
     expenses: '',
     taxYear: '2025'
   });
 
-  // This handles typing in the boxes
+  // New state to store the response from Python
+  const [result, setResult] = useState(null);
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -16,85 +17,102 @@ function TaxForm() {
     });
   };
 
-  // This handles the button click
-  const handleSubmit = (e) => {
-    e.preventDefault(); // Stops the page from refreshing
-    // For Phase 1, we just show an alert. In Phase 2, we will send this to Python.
-    alert(`Ready to send to AI:\nIncome: $${formData.income}\nExpenses: $${formData.expenses}`);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    // 1. Prepare the data (convert strings to numbers)
+    const payload = {
+      income: parseFloat(formData.income),
+      expenses: parseFloat(formData.expenses)
+    };
+
+    try {
+      // 2. Send data to Python Backend
+      const response = await fetch('http://127.0.0.1:8000/calculate-tax', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      // 3. Receive the calculation
+      const data = await response.json();
+      setResult(data); // Save the response to display it
+
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Failed to connect to the backend. Is it running?");
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit} style={styles.form}>
-      <div style={styles.inputGroup}>
-        <label style={styles.label}>Total Annual Income ($)</label>
-        <input
-          type="number"
-          name="income"
-          value={formData.income}
-          onChange={handleChange}
-          placeholder="e.g. 75000"
-          required
-          style={styles.input}
-        />
-      </div>
+    <div style={styles.container}>
+      <form onSubmit={handleSubmit} style={styles.form}>
+        <div style={styles.inputGroup}>
+          <label style={styles.label}>Total Annual Income (€)</label>
+          <input
+            type="number"
+            name="income"
+            value={formData.income}
+            onChange={handleChange}
+            required
+            style={styles.input}
+          />
+        </div>
 
-      <div style={styles.inputGroup}>
-        <label style={styles.label}>Total Expenses ($)</label>
-        <input
-          type="number"
-          name="expenses"
-          value={formData.expenses}
-          onChange={handleChange}
-          placeholder="e.g. 12000"
-          required
-          style={styles.input}
-        />
-      </div>
+        <div style={styles.inputGroup}>
+          <label style={styles.label}>Total Expenses (€)</label>
+          <input
+            type="number"
+            name="expenses"
+            value={formData.expenses}
+            onChange={handleChange}
+            required
+            style={styles.input}
+          />
+        </div>
 
-      <button type="submit" style={styles.button}>
-        Generate Tax Advice
-      </button>
-    </form>
+        <button type="submit" style={styles.button}>
+          Calculate Tax
+        </button>
+      </form>
+
+      {/* Display the Result from Python */}
+      {result && (
+        <div style={styles.resultBox}>
+          <h3>Calculation Result:</h3>
+          <p><strong>Taxable Income:</strong> €{result.taxable_income}</p>
+          <p><strong>Estimated Tax:</strong> €{result.estimated_tax}</p>
+          <p><em>{result.advice}</em></p>
+        </div>
+      )}
+    </div>
   );
 }
 
 const styles = {
+  container: { maxWidth: '450px', margin: '0 auto' },
   form: {
     backgroundColor: '#ffffff',
     padding: '2rem',
     borderRadius: '12px',
     boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-    maxWidth: '450px',
-    margin: '0 auto',
   },
-  inputGroup: {
-    marginBottom: '1.5rem',
-  },
-  label: {
-    display: 'block',
-    marginBottom: '0.5rem',
-    color: '#4a5568',
-    fontWeight: '500',
-  },
-  input: {
-    width: '100%',
-    padding: '0.75rem',
-    borderRadius: '6px',
-    border: '1px solid #cbd5e0',
-    fontSize: '1rem',
-    boxSizing: 'border-box', // Ensures padding doesn't break width
-  },
+  inputGroup: { marginBottom: '1.5rem' },
+  label: { display: 'block', marginBottom: '0.5rem', fontWeight: '500' },
+  input: { width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid #cbd5e0' },
   button: {
-    width: '100%',
-    padding: '1rem',
-    backgroundColor: '#3b82f6',
-    color: 'white',
-    border: 'none',
-    borderRadius: '6px',
-    fontSize: '1.1rem',
-    cursor: 'pointer',
-    fontWeight: 'bold',
-    transition: 'background 0.3s',
+    width: '100%', padding: '1rem', backgroundColor: '#3b82f6', color: 'white',
+    border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold'
+  },
+  resultBox: {
+    marginTop: '20px',
+    padding: '15px',
+    backgroundColor: '#e6fffa',
+    border: '1px solid #38b2ac',
+    borderRadius: '8px',
+    color: '#234e52'
   }
 };
 
