@@ -1,21 +1,28 @@
 import os
+import json
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
+
+# LangChain & Agent Imports
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
-import json
+from langchain_community.tools.tavily_search import TavilySearchResults
+from langchain.agents import create_tool_calling_agent, AgentExecutor
+from langchain import hub
 
 
 
 load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
-
+tavily_key = os.getenv("TAVILY_API_KEY")
 
 if not api_key:
     print("OPENAI_API_KEY not found")
+if not tavily_key:
+    print("TAVILY_API_KEY not found")
 
 app = FastAPI()
 
@@ -47,7 +54,10 @@ class ChatData(BaseModel):
 
 
 
-llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0.3,streaming=True)
+llm = ChatOpenAI(model="gpt-4o", temperature=0.3,streaming=True)
+#Tools for my the agent, we will see at the end:
+search_tool= TavilySearchResults(max_results=3, include_domains=["gov.gr"], api_key=tavily_key) 
+tool=[search_tool]
 
 @app.post("/calculate-tax")
 async def calculate_tax(data: TaxData):
@@ -80,24 +90,6 @@ async def calculate_tax(data: TaxData):
         
         chain = prompt | llm
 
-        ##Iwant to test the streaming response first, so I will comment out the normal response for now
-
-
-        """
-        ai_response = chain.invoke({
-            "income": data.income, 
-            "expenses": data.expenses,
-            "taxable_income": taxable_income
-        })
-
-
-        
-        return {
-            "taxable_income": taxable_income,
-            "estimated_tax": estimated_tax,
-            "advice": ai_response.content  }
-        """
-
 
         async def return_stream():
             header_data={
@@ -108,7 +100,7 @@ async def calculate_tax(data: TaxData):
                 'type': "data" }
             yield json.dumps(header_data) + "\n"
 
-            # Αυτο το εχω για το chat που θελω
+            
         
             message_1={
                 "income": data.income, 
@@ -129,41 +121,43 @@ async def calculate_tax(data: TaxData):
         return {
             "taxable_income": taxable_income,
             "estimated_tax": estimated_tax,
-            "advice": "AI Service unavailable. Please check your API key."
+            "advice": "AI Service unavailable... Please try again later."
         }
-
+#For my chat:
 @app.post("/ask-question")
 async def ask_question(data: ChatData):
+    agent_prompt = hub.pull("hwchase17/openai-functions-agent")
 
-    prompt=ChatPromptTemplate.from_template(
-        """
-        You are a helpful tax assistant for a user from the country {country}. You give concise and clear answers to the user's tax-related questions based on their financial situation.
-        The user has an annual income of {income}€ and expenses of {expenses}€.
-        The user is {marital_status}.
-        The user has a question: {question}
-        Answer the user's question based on the provided context. If you don't know the answer, say you don't know. Be concise and clear in your response. 
-        Max 300 words. Use Markdown formatting for clarity.
-        """
-    )
 
-    message_2={"question": data.question, 
-                "income": data.income, 
-                "expenses": data.expenses,
-                "marital_status": data.marital_status,
-                "country": data.country}
+    system_message = f"""
+    You are an expert tax researcher for {data.country}.
+    User Context: Income {data.income}€, Expenses {data.expenses}€, Status {data.marital_status}.
     
-    chain= prompt| llm 
-
+    If the user asks about current tax laws, rates, or specific deductions, USE THE SEARCH TOOL.
+    Search for official tax authority websites in {data.country}. Do not rely on outdated knowledge, search for the most recent information.
+    Always provide sources for any tax information you give, especially if it involves numbers or specific rules.
     
-    async def ask_question_stream():
-        async for chunk in chain.astream(message_2):
-            yield chunk.content
-    return StreamingResponse(ask_question_stream(), media_type="text/event-stream")
-
+    If the answer is simple math, just answer it.
+    Always format your final answer in Markdown.
     """
-    output=await chain.ainvoke(message_2)
-    return {"answer": output.content}
-"""
+    agent= create_tool_calling_agent(llm=llm,tools=tool,prompt=agent_prompt)
+    agent_executor= AgentExecutor(agent=agent, tools=tool, verbose=True)
+
+
+    async def agent_stream():
+        async for event in agent_executor.astream_events(
+            {
+                "input": data.question,
+                "chat_history": [("system", system_message)]
+            },
+            version="v1"):
+
+            if event["event"] == "on_chat_model_stream":
+                content = event["data"]["chunk"].content
+                if content:
+                    yield content
+
+    return StreamingResponse(agent_stream(), media_type="text/event-stream")
 
 
  
