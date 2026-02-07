@@ -40,8 +40,57 @@ The system uses **OpenAI GPT-4o** and **Tavily Search** to provide up-to-date ta
 ### **Prerequisites**
 - Docker Desktop (Running)
 - Git
+### **1. Configure Environment Variables**
+* Navigate to the backend folder.
 
-### **1. Clone the Repository**
+* Create a file named .env.
+
+* Add your keys: 
+OPENAI_API_KEY=sk-proj-....
+TAVILY_API_KEY=tvly-....
+
+### **2. Run with Docker (Recommended)**
+Run the entire application (Frontend + Backend) with a single command:
+docker compose up --build
+
+* Frontend: Open http://localhost:5173
+
+* Backend API Docs: Open http://localhost:8000/docs
+
+### **3. CI/CD Pipeline** 
+This project includes a GitHub Actions workflow (.github/workflows/ci_pipeline.yml) that runs automatically whenever code is pushed to the main branch
+ # What it does:  
+
+* Sets up a Python 3.10 environment.
+
+* Installs backend dependencies.
+
+* Runs pytest to verify the API endpoints are functioning correctly.
+### ** 4. Project Structure**
+
+├── backend/
+│   ├── main.py             # FastAPI App & AI Logic
+│   ├── Dockerfile          # Backend Container Config
+│   ├── requirements.txt    # Python Dependencies
+│   └── test_main.py        # Automated Tests
+│
+├── frontend/
+│   ├── src/                # React Source Code
+│   ├── Dockerfile          # Frontend Container Config
+│   └── package.json        # Node Dependencies
+│
+├── .github/workflows/
+│   └── ci_pipeline.yml     # CI/CD Configuration
+│
+├── docker-compose.yml      # Orchestration for both services
+└── README.md
+### **5. Author: **
+George Kourelas 
+### **6. Clone the Repository**
 ```bash
 git clone https://github.com/GeoNosX/Intelligent-Tax-Filing-Web-Application.git
 cd Intelligent-Tax-Filing-Web-Application
+
+
+
+
