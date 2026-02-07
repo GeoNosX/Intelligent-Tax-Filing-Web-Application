@@ -55,16 +55,16 @@ class ChatData(BaseModel):
 
 
 llm = ChatOpenAI(model="gpt-4o", temperature=0.3,streaming=True)
-#Tools for my the agent, we will see at the end:
-search_tool= TavilySearchResults(max_results=3, include_domains=["gov.gr"], api_key=tavily_key) 
+#Tools for my agent, we will see at the end:
+search_tool= TavilySearchResults(max_results=5, include_domains=["gov.gr"], api_key=tavily_key) 
 tool=[search_tool]
 
 @app.post("/calculate-tax")
 async def calculate_tax(data: TaxData):
-    try:
-        
+    try: 
         taxable_income = data.income - data.expenses
-        estimated_tax = taxable_income * 0.23 
+        estimated_tax = taxable_income * 0.23
+
         
        
         prompt = ChatPromptTemplate.from_template(
@@ -134,7 +134,8 @@ async def ask_question(data: ChatData):
     User Context: Income {data.income}€, Expenses {data.expenses}€, Status {data.marital_status}.
     
     If the user asks about current tax laws, rates, or specific deductions, USE THE SEARCH TOOL.
-    Search for official tax authority websites in {data.country}. Do not rely on outdated knowledge, search for the most recent information.
+    Search for official goverment tax authority websites in {data.country} for the year {data.tax_year}. 
+    Do not rely on outdated knowledge, search for the most recent information.
     Always provide sources for any tax information you give, especially if it involves numbers or specific rules.
     
     If the answer is simple math, just answer it.
