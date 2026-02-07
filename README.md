@@ -59,7 +59,7 @@ docker compose up --build
 
 ### **3. CI/CD Pipeline** 
 This project includes a GitHub Actions workflow (.github/workflows/ci_pipeline.yml) that runs automatically whenever code is pushed to the main branch
- # What it does:  
+ #### What it does:  
 
 * Sets up a Python 3.10 environment.
 
