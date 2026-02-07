@@ -46,7 +46,9 @@ The system uses **OpenAI GPT-4o** and **Tavily Search** to provide up-to-date ta
 * Create a file named .env.
 
 * Add your keys: 
+
 OPENAI_API_KEY=sk-proj-....
+
 TAVILY_API_KEY=tvly-....
 
 ### **2. Run with Docker (Recommended)**
