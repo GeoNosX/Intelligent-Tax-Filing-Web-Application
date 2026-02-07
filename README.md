@@ -69,21 +69,37 @@ This project includes a GitHub Actions workflow (.github/workflows/ci_pipeline.y
 ### ** 4. Project Structure**
 
 ├── backend/
-│   ├── main.py             # FastAPI App & AI Logic
-│   ├── Dockerfile          # Backend Container Config
-│   ├── requirements.txt    # Python Dependencies
-│   └── test_main.py        # Automated Tests
+
+│   ├── main.py 
+
+│   ├── Dockerfile  
+
+│   ├── requirements.txt  
+
+│   └── test_main.py 
+
 │
+
 ├── frontend/
-│   ├── src/                # React Source Code
-│   ├── Dockerfile          # Frontend Container Config
-│   └── package.json        # Node Dependencies
+
+│   ├── src/    
+
+│   ├── Dockerfile  
+
+│   └── package.json   
+
 │
+
 ├── .github/workflows/
-│   └── ci_pipeline.yml     # CI/CD Configuration
+
+│   └── ci_pipeline.yml  
+
 │
-├── docker-compose.yml      # Orchestration for both services
+
+├── docker-compose.yml   
+   
 └── README.md
+
 ### **5. Author: **
 George Kourelas 
 ### **6. Clone the Repository**
