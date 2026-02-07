@@ -58,6 +58,7 @@ docker compose up --build
 * Backend API Docs: Open http://localhost:8000/docs
 
 ### **3. CI/CD Pipeline** 
+
 This project includes a GitHub Actions workflow (.github/workflows/ci_pipeline.yml) that runs automatically whenever code is pushed to the main branch
  #### What it does:  
 
@@ -66,7 +67,8 @@ This project includes a GitHub Actions workflow (.github/workflows/ci_pipeline.y
 * Installs backend dependencies.
 
 * Runs pytest to verify the API endpoints are functioning correctly.
-### ** 4. Project Structure**
+
+### **4. Project Structure**
 
 ├── backend/
 
@@ -97,10 +99,10 @@ This project includes a GitHub Actions workflow (.github/workflows/ci_pipeline.y
 │
 
 ├── docker-compose.yml   
-   
+
 └── README.md
 
-### **5. Author: **
+### **5. Author:**
 George Kourelas 
 ### **6. Clone the Repository**
 ```bash
