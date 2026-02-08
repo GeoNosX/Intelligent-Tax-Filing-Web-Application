@@ -62,9 +62,11 @@ tool=[search_tool]
 @app.post("/calculate-tax")
 async def calculate_tax(data: TaxData):
     try: 
-        taxable_income = data.income - data.expenses
-        estimated_tax = taxable_income * 0.23
-
+        if data.income > 0:
+            net_profit = data.income - data.expenses
+            profit_margin = round((net_profit / data.income) * 100, 1)
+        else:
+            profit_margin = 0
         
        
         prompt = ChatPromptTemplate.from_template(
@@ -72,11 +74,13 @@ async def calculate_tax(data: TaxData):
         You are a helpful tax assistant for a user from the country {country}.
 
         The user has an annual income of {income}€ and expenses of {expenses}€.
-        Their estimated taxable income is {taxable_income}€.
+        The user's net profit is {net_profit}€.
+        The user's profit margin is {profit_margin}%.
         The user is {marital_status}.
         
+        
         Please provide:
-        1. A brief analysis of their financial situation based on user's country status.
+        1. A brief analysis of their financial situation based on user's country status. 
         2. Two tax-saving tips relevant to their situation and Country that he lives in.
         3. A disclaimer that you are an AI and this is not professional advice.
         4. Tell the user to ask in the chat below if they have any other tax-related questions or if they want more details on this topic.
@@ -95,8 +99,8 @@ async def calculate_tax(data: TaxData):
             header_data={
                 'income': data.income,
                 'expenses' : data.expenses,
-                'taxable_income': taxable_income,
-                'estimated_tax': estimated_tax,
+                'profit_margin': profit_margin,
+                'net_profit': net_profit,
                 'type': "data" }
             yield json.dumps(header_data) + "\n"
 
@@ -107,7 +111,8 @@ async def calculate_tax(data: TaxData):
                 "expenses": data.expenses,
                 "marital_status": data.marital_status,
                 "country": data.country,
-                "taxable_income": taxable_income}
+                "net_profit": net_profit,
+                "profit_margin": profit_margin}
             
 
 
@@ -119,8 +124,8 @@ async def calculate_tax(data: TaxData):
     except Exception as e:
         print(f"Error: {e}")
         return {
-            "taxable_income": taxable_income,
-            "estimated_tax": estimated_tax,
+            'profit_margin': profit_margin,
+            'net_profit': net_profit,
             "advice": "AI Service unavailable... Please try again later."
         }
 #For my chat:

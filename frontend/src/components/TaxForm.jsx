@@ -174,16 +174,24 @@ function TaxForm() {
       {result && (
         <div style={styles.resultBox}>
           {/* A. Summary Stats */}
-          <h3 style={{marginTop: 0, color: '#2c7a7b'}}>Analysis Result</h3>
+          <h3 style={{marginTop: 0, color: '#2c7a7b'}}>Financial State:</h3> 
           <div style={styles.summaryGrid}>
+            
+            {/* ITEM 1: NET PROFIT */}
             <div style={styles.statItem}>
-              <span style={styles.statLabel}>Taxable Income</span>
-              <span style={styles.statValue}>€{result.taxable_income?.toLocaleString()}</span>
+              <span style={styles.statLabel}>Net Profit (Real Income)</span>
+              {/* Note: We changed .taxable_income to .net_profit */}
+              <span style={styles.statValue}>€{result.net_profit?.toLocaleString()}</span>
             </div>
+
+            {/* ITEM 2: PROFIT MARGIN */}
             <div style={styles.statItem}>
-              <span style={styles.statLabel}>Est. Tax (23%)</span>
-              <span style={styles.statValue}>€{result.estimated_tax?.toLocaleString()}</span>
+              <span style={styles.statLabel}>Profit Margin %</span>
+              {/* Note: We changed .estimated_tax to .profit_margin */}
+              {/* We removed '€' because this is a percentage now */}
+              <span style={styles.statValue}>{result.profit_margin}</span>
             </div>
+
           </div>
 
           {/* B. Main AI Advice */}
@@ -194,7 +202,7 @@ function TaxForm() {
           {/* C. Chat Q&A Display */}
           {chatAnswer && (
             <div style={styles.chatAnswer}>
-              <strong>AI Answer:</strong>
+              <strong>AI Agent Answer:</strong>
               <div style={{marginTop: '5px'}}>
                  <ReactMarkdown>{chatAnswer}</ReactMarkdown>
               </div>
