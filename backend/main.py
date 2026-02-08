@@ -56,7 +56,7 @@ class ChatData(BaseModel):
 
 llm = ChatOpenAI(model="gpt-4o", temperature=0.3,streaming=True)
 #Tools for my agent, we will see at the end:
-search_tool= TavilySearchResults(max_results=5, include_domains=["gov.gr"], api_key=tavily_key) 
+search_tool= TavilySearchResults(max_results=5, api_key=tavily_key) 
 tool=[search_tool]
 
 @app.post("/calculate-tax")
@@ -77,15 +77,15 @@ async def calculate_tax(data: TaxData):
         
         Please provide:
         1. A brief analysis of their financial situation based on user's country status.
-        2. Two tax-saving tips relevant to their situation.
+        2. Two tax-saving tips relevant to their situation and Country that he lives in.
         3. A disclaimer that you are an AI and this is not professional advice.
+        4. Tell the user to ask in the chat below if they have any other tax-related questions or if they want more details on this topic.
         
         Format your response using Markdown:
         - Use **Bold** for key terms.
         - Use bullet points for the tips.
-        - Keep the response concise (under 250 words).
-        """
-    )
+        - Keep the response concise (under 300 words).
+        """)
 
         
         chain = prompt | llm
@@ -140,6 +140,8 @@ async def ask_question(data: ChatData):
     
     If the answer is simple math, just answer it.
     Always format your final answer in Markdown.
+    At the end of the answer, ask the user if they want to know more or have another question. 
+    For example, "Do you have any other tax-related questions?" or "Would you like more details on this topic?".
     """
     agent= create_tool_calling_agent(llm=llm,tools=tool,prompt=agent_prompt)
     agent_executor= AgentExecutor(agent=agent, tools=tool, verbose=True)
