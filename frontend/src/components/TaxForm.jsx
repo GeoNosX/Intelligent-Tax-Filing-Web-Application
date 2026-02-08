@@ -181,7 +181,7 @@ function TaxForm() {
             <div style={styles.statItem}>
               <span style={styles.statLabel}>Net Profit (Real Income)</span>
               {/* Note: We changed .taxable_income to .net_profit */}
-              <span style={styles.statValue}>€{result.net_profit?.toLocaleString()}</span>
+              <span style={styles.statValue}>{result.net_profit?.toLocaleString()}€</span>
             </div>
 
             {/* ITEM 2: PROFIT MARGIN */}
@@ -189,7 +189,7 @@ function TaxForm() {
               <span style={styles.statLabel}>Profit Margin %</span>
               {/* Note: We changed .estimated_tax to .profit_margin */}
               {/* We removed '€' because this is a percentage now */}
-              <span style={styles.statValue}>{result.profit_margin}</span>
+              <span style={styles.statValue}>{result.profit_margin}%</span>
             </div>
 
           </div>

@@ -144,14 +144,14 @@ async def ask_question(data: ChatData):
     Always provide sources for any tax information you give, especially if it involves numbers or specific rules.
     
     If the answer is simple math, just answer it.
-    Always format your final answer in Markdown.
+    Always format your final answer in Markdown and answer in the user's language.
     At the end of the answer, ask the user if they want to know more or have another question. 
     For example, "Do you have any other tax-related questions?" or "Would you like more details on this topic?".
 
     """
     agent_prompt = ChatPromptTemplate.from_messages([
         ("system",system_message),
-
+        ("user", data.question),
         MessagesPlaceholder(variable_name="agent_scratchpad")
     ])
 
