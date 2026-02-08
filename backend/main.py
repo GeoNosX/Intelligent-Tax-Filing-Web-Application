@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 
 # LangChain & Agent Imports
 from langchain_openai import ChatOpenAI
-from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate,MessagesPlaceholder
 from langchain_community.tools.tavily_search import TavilySearchResults
 from langchain.agents import create_tool_calling_agent, AgentExecutor
 from langchain import hub
@@ -131,7 +131,7 @@ async def calculate_tax(data: TaxData):
 #For my chat:
 @app.post("/ask-question")
 async def ask_question(data: ChatData):
-    agent_prompt = hub.pull("hwchase17/openai-functions-agent")
+    
 
 
     system_message = f"""
@@ -147,23 +147,26 @@ async def ask_question(data: ChatData):
     Always format your final answer in Markdown.
     At the end of the answer, ask the user if they want to know more or have another question. 
     For example, "Do you have any other tax-related questions?" or "Would you like more details on this topic?".
+
     """
+    agent_prompt = ChatPromptTemplate.from_messages([
+        ("system",system_message),
+
+        MessagesPlaceholder(variable_name="agent_scratchpad")
+    ])
+
+
+
+
     agent= create_tool_calling_agent(llm=llm,tools=tool,prompt=agent_prompt)
     agent_executor= AgentExecutor(agent=agent, tools=tool, verbose=True)
 
 
     async def agent_stream():
-        async for event in agent_executor.astream_events(
-            {
-                "input": data.question,
-                "chat_history": [("system", system_message)]
-            },
-            version="v1"):
-
+        async for event in agent_executor.astream_events({"input": data.question},version="v1"):
             if event["event"] == "on_chat_model_stream":
-                content = event["data"]["chunk"].content
-                if content:
-                    yield content
+                if "chunk" in event["data"] and event["data"]["chunk"].content:
+                    yield event["data"]["chunk"].content
 
     return StreamingResponse(agent_stream(), media_type="text/event-stream")
 
