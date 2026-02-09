@@ -72,6 +72,7 @@ async def calculate_tax(data: TaxData):
         prompt = ChatPromptTemplate.from_template(
         """
         You are a helpful tax assistant for a user from the country {country}.
+        Answer to the user in the language of the country he lives in.
 
         The user has an annual income of {income}€ and expenses of {expenses}€.
         The user's net profit is {net_profit}€.
