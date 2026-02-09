@@ -8,7 +8,7 @@ The system uses **OpenAI GPT-4o** and **Tavily Search** to provide up-to-date ta
 
 ## 🚀 Features
 
-- **📊 Smart Tax Calculator:** Instantly calculates taxable income and estimated tax liability based on income and expenses.
+- **📊 Calculator:** Instantly calculates net profit and profit margin based on income and expenses.
 - **🤖 AI Tax Agent:** A "ReAct" agent that answers complex tax questions by searching the live internet for current laws.
 - **⚡ Real-Time Streaming:** AI responses are streamed character-by-character for a fluid user experience.
 - **🐳 Dockerized:** Fully containerized architecture (Frontend + Backend) for one-command deployment.
