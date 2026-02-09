@@ -9,7 +9,7 @@ The system uses **OpenAI GPT-4o** and **Tavily Search** to provide up-to-date ta
 ## 🚀 Features
 
 - **📊 Calculator:** Instantly calculates net profit and profit margin based on income and expenses.
-- **🤖 AI Tax Agent:** A "ReAct" agent that answers complex tax questions by searching the live internet for current laws.
+- **🤖 AI Tax Agent:** A "ReAct" agent that answers complex tax questions by searching the live internet for current laws for every country.
 - **⚡ Real-Time Streaming:** AI responses are streamed character-by-character for a fluid user experience.
 - **🐳 Dockerized:** Fully containerized architecture (Frontend + Backend) for one-command deployment.
 - **✅ CI/CD Pipeline:** Automated testing via GitHub Actions ensures code stability on every push.
