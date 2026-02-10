@@ -41,9 +41,9 @@ The system uses **OpenAI GPT-4o** and **Tavily Search** to provide up-to-date ta
 - Docker Desktop (Running)
 - Git
 ### **1. Configure Environment Variables**
-* Navigate to the backend folder.
+* Navigate to the backend folder
 
-* Create a file named .env.
+* Create a file named .env
 
 * Add your keys: 
 
