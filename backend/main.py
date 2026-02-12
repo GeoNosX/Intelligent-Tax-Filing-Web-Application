@@ -153,7 +153,7 @@ async def ask_question(data: ChatData):
     """
     agent_prompt = ChatPromptTemplate.from_messages([
         ("system",system_message),
-        ("user", data.question),
+        ("user", "{input}"),
         MessagesPlaceholder(variable_name="agent_scratchpad")
     ])
 
